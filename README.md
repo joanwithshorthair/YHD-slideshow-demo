@@ -1,1 +1,1 @@
-#[YHD-slideshow-demo](https://joanwithshorthair.github.io/YHD-slideshow-demo/)
+#[YHD-slideshow-demo](https://joanwithshorthair.github.io/demo-slideshow-YHD/)
