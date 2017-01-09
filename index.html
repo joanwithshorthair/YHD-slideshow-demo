@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Focus slideshow</title>
+	<script>
+	window.onload = function(){
+		//设变量，获取元素和定义function
+		var index = 0,
+		    timer = null;
+		
+		var lis = document.getElementsByTagName("li"),
+			imgs = document.getElementsByTagName("img"),
+			main = document.getElementById("main"),
+			spriteLeft = document.getElementById("sprite1"),
+			spriteRight = document.getElementById("sprite2");
+
+		function highlightOffAndOn(curIndex){
+			for(var j=0;j<lis.length;j++){
+				lis[j].className = "";
+				imgs[j].style.display = "none";
+			}
+			
+			lis[curIndex].className = "select";
+			imgs[curIndex].style.display = "block";
+		}
+		
+		function autoPlayPauseAndContinue(){	
+			main.onmouseenter = function(){//注意这里onmouseover失效，改成onmouseenter修复
+				clearInterval(timer);
+			}
+		
+			main.onmouseleave = function(){//注意这里onmouseout失效，改成onmouseleave修复
+				timer = setInterval(function(){//重复代码//自动轮播
+					index++;
+					if(index == lis.length){index = 0};
+					highlightOffAndOn(index);
+					},2000);
+			}
+		}
+		
+		//自动轮播
+		timer = setInterval(function(){
+			index++;
+			if(index == lis.length){index = 0};
+			highlightOffAndOn(index);
+		},2000);
+		
+		//鼠标移到main div时轮播暂停，移出div时轮播继续
+		autoPlayPauseAndContinue()
+		
+		//手动鼠标滑入切换
+		for(var i=0;i<lis.length;i++){
+			lis[i].id=i;
+			lis[i].onmouseover = function(){
+				clearInterval(timer);
+				highlightOffAndOn(this.id);
+				index = this.id;
+			}
+			
+		//鼠标滑出main div后恢复自动轮播,该语句可省略，因为上方已经掉用过autoPlayPauseAndContinue函数
+			//autoPlayPauseAndContinue()
+		}
+
+		//加左右两边箭头手动onclick切换，onclick切换是从当前图片继续播下一个
+		main.onmouseover = function(){//鼠标放在main div上显示左右箭头
+			spriteLeft.style.display = "block";
+			spriteRight.style.display = "block";
+		}
+		
+		main.onmouseout = function(){//鼠标放在main div上隐藏左右箭头
+			spriteLeft.style.display = "none";
+			spriteRight.style.display = "none";
+		}
+		
+		spriteLeft.onclick = function(){//鼠标点击左箭头时，给我做点事情。。。
+			clearInterval(timer);//先把自动切换停掉
+			index--;//当前index减1，因为是往左滑动
+			if(index<0){index=4};
+			
+			highlightOffAndOn(index);
+			
+		}
+		
+		spriteRight.onclick = function(){//鼠标点击右箭头时，给我做点事情。。。
+			clearInterval(timer);//先把自动切换停掉
+			index++;//当前index减1，因为是往左滑动
+			if(index>4){index=0};
+			
+			highlightOffAndOn(index);
+		}
+		
+		//左右两边箭头onclick切换停止后恢复自动轮播，其实是设置鼠标离开main div后恢复自动轮播，从最后一次点箭头的index开始。但是这里不用再一次调用autoPlayPauseAndContinue也可以顺利播放，原因应该是前面调用的
+		//autoPlayPauseAndContinue()
+	}
+	</script>
+	<style>
+		*{
+			margin:0;
+			padding:0
+		}
+		
+		div#main{
+			position:relative;
+			width:530px;
+			height:398px;
+			margin:50px auto;
+		}
+		
+		div#sprite1{
+			display:none;
+			position:absolute;
+			top:160px;
+			left:0px;
+			height:80px;
+			width:45px;
+			
+			/*注意这里设置同一个元素的背景图和背景色，背景色要放在背景图下面才有效*/
+            background: url(index_sprite_new.png) no-repeat 0 0;
+	        background-color: rgba(102,102,102,0.25);
+		}
+		
+		div#sprite2{
+		    display:none;
+			position:absolute;
+			top:160px;
+			left:485px;
+			height:80px;
+			width:45px;
+			
+			background: url(index_sprite_new.png) no-repeat -80px 0;
+	        background-color: rgba(102,102,102,0.25);
+		}
+		
+		#sprite1:hover, #sprite2:hover{
+			background-color: rgba(60,60,60,0.5);
+		}
+		
+		a{
+			display:block;
+			position:absolute; /*让所有图片重叠*/
+			top:0;
+			left:0;
+		}
+		
+		img{
+			display:none;
+		}
+		
+		ul{
+			list-style:none;
+			position:relative;
+			left:-16.5%;
+			top:360px;
+		}
+		
+		li{
+			display:inline-block;
+			width:20px;
+			height:20px;
+			position:relative;
+			right:-50%;
+			margin:5px;
+			background: #ccc;
+			z-index:2;
+			cursor:pointer;
+		}
+		
+		.select{
+			background:#ff3c3c;
+		}
+		
+	</style>
+</head>
+<body>
+	<div id="main">
+		<a href="#"><img style="display:block" src="one.jpg" alt="pic one"></a>
+		<a href="#"><img src="two.jpg" alt="pic two"></a>
+		<a href="#"><img src="three.jpg" alt="pic three"></a>
+		<a href="#"><img src="four.jpg" alt="pic four"></a>
+		<a href="#"><img src="five.jpg" alt="pic four"></a>
+		
+		<ul>
+			<li class="select"></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+		
+		<div id="sprite1"></div>
+		
+		<div id="sprite2"></div>
+	</div>
+</body>
+</html>
